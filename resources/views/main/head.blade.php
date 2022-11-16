@@ -25,6 +25,7 @@
 
   <!-- Template Main CSS File -->
   <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ asset('assets/js/DataTables/datatables.min.css') }}"/>
 
   <!-- =======================================================
   * Template Name: NiceAdmin - v2.2.2
