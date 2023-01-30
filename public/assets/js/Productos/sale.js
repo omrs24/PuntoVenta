@@ -1,9 +1,7 @@
 $(document).ready(function () {
-
-    /*$("#tbProdsResume").on('click', '.btnedit', function () {
-        //alert("clicked " + $(this).attr("data-id"));
-        $("#editModal").show();
-    });*/
+    /**
+     * Change text form Datatable to Spanish
+     */
     var lang_ES_EN = {
         "processing": "Procesando...",
         "lengthMenu": "Mostrar _MENU_ registros",
@@ -247,6 +245,9 @@ $(document).ready(function () {
         }
     };
 
+    /**
+     * Product Table define and populate
+     */
     var sTable = $("#tbProdsResume").DataTable({
         language: lang_ES_EN,
         ajax: {
@@ -254,20 +255,31 @@ $(document).ready(function () {
             type: "GET",
             dataSrc: ""
         },
-        dom: '<"top"l>rt<"bottom"p><"clear">',
+        dom: '<"clear">',
         columnDefs: [
             {
                 className: ["dt-center"],
                 targets: "_all"
+            },{
+                className: ["text-start"],
+                targets: 3
+            },
+            {
+                className: "d-none",
+                targets: 0
+            },
+            {
+                className: "text-primary fw-bold",
+                targets: 2
             },
             {
                 "render": function (data, type, row) {
-                    return `<img src="${data}" alt="${data}">`;
+                    return `<span class="prodId" data-id="${data}">${data}</span>`;
                 }, "targets": 0
             },
             {
                 "render": function (data, type, row) {
-                    return "<span class='id'>" + data + "</span>";
+                    return `<img src="${data}" alt="${data}" width="80">`;
                 }, "targets": 1
             },
             {
@@ -277,28 +289,122 @@ $(document).ready(function () {
             },
             {
                 "render": function (data, type, row) {
-                    return "<span class='reference'>" + data + "</span>";
+                    return "<span class='price'><span>$</span> " + Number(data).toFixed(2) + "</span>";
                 }, "targets": 3
+            },
+            {
+                "render": function (data, type, row) {
+                    return "<span class='inventory'>" + data + "</span>";
+                }, "targets": 4
             }
         ],
         columns: [
+            { "data": "ID" },
             { "data": "image" },
             { "data": "name" },
-            { "data": "detail" },
-            { "data": "mname" }
+            { "data": "price1" },
+            { "data": "inventory" }
         ],
         rowCallback: function (row, data) {
             $(row).addClass('cursor-pointer');
         }
     });
 
-    /*$("#divBuscarProd").on('keyup', '#txtBuscarProd', function () {
-        //ProdTable.sSearch();
-        ProdTable.search( $(this).val() ).draw();
-    });*/
-
-    $("#txtBuscarProd").on('keyup click', function () {
+    /**
+     * On Input:text text change
+     */
+    $("#txtSearchProd").on('input', function () {
         sTable.search($(this).val()).draw();
+    });
+
+    /**
+     * On paste event
+     */
+    $(document).bind("paste", function(e){
+        var pastedData = e.originalEvent.clipboardData.getData('text');
+        $("#txtSearchProd").val(pastedData);
+        sTable.search($("#txtSearchProd").val()).draw();
+    } );
+
+    /**
+     * On Product Table row click
+     */
+    $("#tbProdsResume tbody").on("click", "tr", function(e){
+        var id = $(this).closest("tr").find(".prodId").attr("data-id");
+
+        //Despues de obtener el id del producto obtener info del producto y agergar a carrito
+        
+        $.ajax({
+            url: getProduct,
+            type: "post",
+            data: {
+                _token: csfr_token,
+                q: id
+            },
+            success: function(result) {
+                //Agregar fila con el contenido del producto
+                var row = `<div class="row py-1" prod-id="${ result[0].id }">
+                    <div class="col-4">
+                        <img src="${ result[0].image }" width="70" height="70" alt="" srcset="" prod-id="${ result[0].id }">
+                    </div>
+                    <div class="col-4">
+                        <div class="itemTitle">
+                            <span class="sitemTitle" prod-id="${ result[0].ID }">${ result[0].name }</span>
+                            ${ result[0].detail}
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div id="itemQuantity" class="itemQuantity" prod-id="${ result[0].ID }">
+                            <i class="btnChQuant bx bx-minus" style="cursor:pointer;" 
+                                data-type="de" prod-id="${ result[0].ID }"></i>
+                            
+                            <span class="sitemQuantity" prod-id="${ result[0].ID }" >0</span>
+                            
+                            <i class="btnChQuant bi bi-plus-circle" style="cursor:pointer;" 
+                            data-type="in" prod-id="${ result[0].ID }" max="${result[0].inventory}"></i>
+                        </div>
+                    </div>
+                </div>`;
+                
+                $("#products-cart").append(row);
+            }
+        })
+    });
+
+    /**
+     * 
+     * Al presionar boton de incremento o decremento en producto
+     * Se agrega document para que los elementos creados dynamicamente entren dentro del eventhandler Clicked
+     * 
+     */
+    
+    $(document).on("click",".btnChQuant",function(e){
+        
+        e.preventDefault();
+
+        var button = $(this);
+        var prod_id = $(this).attr("prod-id");
+        var oldValue = $(`[prod-id='${prod_id}']`).find(".sitemQuantity").html();
+        
+        console.log("prod-id: " + prod_id);
+        console.log("oldValue: " + oldValue);
+
+        if (button.attr('data-type') == "in") {
+            var newVal = parseFloat(oldValue) + 1;
+            if(newVal > button.attr('max')){
+                alert("Cantidad en inventario no suficiente");
+                return
+            }
+
+        } else {
+            if (oldValue > 0) {
+                var newVal = parseFloat(oldValue) - 1;
+            } else {
+                newVal = 0;
+            }
+        }
+        console.log("newVal: " + newVal);
+        $(`[prod-id='${prod_id}']`).find(".sitemQuantity").html(newVal);
     });
 
 });
