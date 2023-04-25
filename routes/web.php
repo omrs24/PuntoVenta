@@ -29,6 +29,8 @@ Route::group(['prefix' => '/panel' ], function(){
         Route::get('/', [ProductsController::class, 'index'])->name('ProductsIndex');
     
         Route::get('/getAllProducts', [ProductsController::class, 'getAllProducts'])->name('getAllProducts');
+
+        Route::post('/getProduct', [ProductsController::class, 'getProduct'])->name('getProduct');
     
     });
     
