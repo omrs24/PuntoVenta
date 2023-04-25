@@ -262,7 +262,7 @@ $(document).ready(function () {
             },
             {
                 "render": function (data, type, row) {
-                    return `<img src="${data}" alt="${data}">`;
+                    return `<img src="${data}" alt="${data}" width="80">`;
                 }, "targets": 0
             },
             {

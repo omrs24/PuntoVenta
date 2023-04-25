@@ -1,0 +1,5 @@
+[27-Oct-2022 21:31:46 America/Mexico_City] PHP Warning:  require(/home4/hosofyc1/tiendalp.hosofy.com/PuntoVenta/public/../vendor/autoload.php): Failed to open stream: No such file or directory in /home4/hosofyc1/tiendalp.hosofy.com/PuntoVenta/public/index.php on line 34
+[27-Oct-2022 21:31:46 America/Mexico_City] PHP Fatal error:  Uncaught Error: Failed opening required '/home4/hosofyc1/tiendalp.hosofy.com/PuntoVenta/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home4/hosofyc1/tiendalp.hosofy.com/PuntoVenta/public/index.php:34
+Stack trace:
+#0 {main}
+  thrown in /home4/hosofyc1/tiendalp.hosofy.com/PuntoVenta/public/index.php on line 34
