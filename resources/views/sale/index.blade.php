@@ -169,8 +169,8 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row m-2">
-                                                <button type="button" class="btn btn-primary ">Finalizar Venta</button>
+                                            <div class="row m-0 p-0">
+                                                <button type="button" class="btn btn-primary py-4"><p class="h1">Finalizar Venta</p></button>
                                             </div>
                                         </div>
                                     </div>

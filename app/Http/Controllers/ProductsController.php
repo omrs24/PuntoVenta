@@ -26,4 +26,18 @@ class ProductsController extends Controller
 
         return $products;
     }
+
+    //Get specific product with vendor, brand and category information
+    public function getProduct(Request $request){
+
+        $product = Lib::querySQLMYSQL("SELECT t1.ID,t1.name,t1.detail,t1.reference,t1.inventory,t1.price1,t1.cost, vendor.name 'vname',
+        marca.name 'mname', cat.catName 'cname', t1.image
+        FROM product t1
+        INNER JOIN vendor on t1.vendorID = vendor.ID
+        INNER JOIN marca on t1.marca = marca.ID
+        INNER JOIN cat on t1.catID = cat.ID
+        WHERE t1.ID = ?" , [ $request->q ]);
+
+        return $product;
+    }
 }
